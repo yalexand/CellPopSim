@@ -146,6 +146,8 @@ switch model
         dc.set_cancer_delayed; %Tmax = 13; % days        
     case 'kidney_development'
         dc.set_kidney_development; %Tmax = 11; % days
+    case 'disappearance'
+        dc.set_disappearance; %Tmax = 13; % days       
 end
 
 dc.simulate(Nini,24*Tmax);

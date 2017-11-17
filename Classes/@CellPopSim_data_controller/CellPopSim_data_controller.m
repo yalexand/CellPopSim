@@ -27,7 +27,7 @@ classdef CellPopSim_data_controller < handle
         crnt_buffer = [];
         next_buffer = [];
         
-        models = {'cancer','cancer_delayed','kidney_development'};
+        models = {'cancer','cancer_delayed','kidney_development','disappearance'};
         
         simulations_interrupt_flag  = false;
         
