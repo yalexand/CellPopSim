@@ -268,8 +268,10 @@ switch mode
         xlabel(handles.main_plot,'days past inception','fontsize',14);
         ylabel(handles.main_plot,'cell N(t)','fontsize',14);
     case 'generation(t)'
-        for k=1:numel(dc.cell_types)
-             plot(handles.main_plot,dc.t/24,gen_numbers(k,:),'linewidth',2);
+        for k=1:numel(dc.cell_types)            
+             gens = gen_numbers(k,:);
+             range = gens>0;
+             plot(handles.main_plot,dc.t(range)/24,gens(range),'linewidth',2);                          
              hold on;
         end
         hold off;
