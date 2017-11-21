@@ -22,7 +22,7 @@ function varargout = CellPopSim_GUI(varargin)
 
 % Edit the above text to modify the response to help CellPopSim_GUI
 
-% Last Modified by GUIDE v2.5 17-Nov-2017 11:29:47
+% Last Modified by GUIDE v2.5 21-Nov-2017 14:10:54
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -64,6 +64,9 @@ set(handles.plot_type_chooser,'String',{'N(t)','generation(t)'});
 
 handles.Tmax = 10;
 set(handles.Tmax_edit,'String',num2str(handles.Tmax));
+
+handles.dt = data_controller.dt;
+set(handles.dt_edit,'String',num2str(handles.dt));
 
 % Update handles structure
 guidata(hObject, handles);
@@ -305,6 +308,40 @@ function plot_type_chooser_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function dt_edit_Callback(hObject, eventdata, handles)
+% hObject    handle to dt_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of dt_edit as text
+%        str2double(get(hObject,'String')) returns contents of dt_edit as a double
+value = str2double(get(hObject,'String'));
+if isnumeric(value) && value > 1/12
+    handles.dt = value;
+    guidata(hObject,handles);
+else
+    value = handles.dt;
+    set(hObject,'String',num2str(value));
+end
+dc = handles.data_controller;
+dc.dt = handles.dt;
+uiresume(handles.CellPopSim);
+
+
+% --- Executes during object creation, after setting all properties.
+function dt_edit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to dt_edit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

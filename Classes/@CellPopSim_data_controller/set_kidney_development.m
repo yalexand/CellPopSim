@@ -24,5 +24,5 @@
             %
             obj.Progression_probability = [1,1,1,1];
             %
-            obj.dt = 2;                                    
+            %obj.dt = 2;                                    
         end
