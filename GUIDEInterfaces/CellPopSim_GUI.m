@@ -62,6 +62,10 @@ set(handles.model_chooser,'String',data_controller.models);
 
 set(handles.plot_type_chooser,'String',{'N(t)','generation(t)'});
 
+plot(handles.graph_pane,handles.data_controller.G,'Layout','layered');
+set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+set(handles.graph_pane, 'xtick', [], 'ytick', []);
+
 handles.Tmax = 10;
 set(handles.Tmax_edit,'String',num2str(handles.Tmax));
 
@@ -225,11 +229,9 @@ switch model
         dc.set_disappearance; %Tmax = 13; % days       
 end
 %
-% plot(handles.graph_pane,dc.G,'Layout','layered');
-% set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
-% set(handles.graph_pane, 'xtick', [], 'ytick', []);
-%
-%figure(22);plot(dc.G,'Layout','layered');
+plot(handles.graph_pane,dc.G,'Layout','layered');
+set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+set(handles.graph_pane, 'xtick', [], 'ytick', []);
 
 % --- Executes during object creation, after setting all properties.
 function model_chooser_CreateFcn(hObject, eventdata, handles)
