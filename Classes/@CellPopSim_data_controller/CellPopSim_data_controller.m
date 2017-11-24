@@ -34,6 +34,8 @@ classdef CellPopSim_data_controller < handle
         cell_numbers = [];
         gen_numbers = [];
         
+        G = []; % graph
+        
     end
 %--------------------------------------------------------------------                  
     events
@@ -45,7 +47,7 @@ classdef CellPopSim_data_controller < handle
         function obj = CellPopSim_data_controller(varargin) 
             
             addlistener(obj,'interrupt_simulations',@obj.on_interrupt_simulations);
-            
+            obj.create_hematopoietic_graph;
         end
 %--------------------------------------------------------------------                      
         function on_interrupt_simulations(obj,~,~)
@@ -269,5 +271,23 @@ end
             %
         end
 %--------------------------------------------------------------------    
+        function create_graph(obj,~,~)
+            if isempty(obj.cell_types), return, end
+            %
+            N = numel(obj.cell_types);            
+            % for now linear only            
+            S_range = 1:N-1;
+            T_range = 2:N;             
+            obj.G = digraph(obj.cell_types(S_range),obj.cell_types(T_range));            
+        end
+%--------------------------------------------------------------------
+        function create_hematopoietic_graph(obj,~,~) %default graph            
+            [~,TXT,~] = xlsread('hematopoiesis_edges.xls');
+            S = TXT(:,1);
+            T = TXT(:,2);
+            obj.G = digraph(S,T);
+        end
+%--------------------------------------------------------------------            
+
     end  
 end

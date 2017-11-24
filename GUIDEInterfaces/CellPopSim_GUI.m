@@ -154,6 +154,9 @@ switch model
 end
 
 dc.simulate(Nini,24*Tmax);
+handles.data_controller = dc;
+% Update handles structure
+guidata(hObject, handles);
 
 if isempty(dc.cell_numbers)
     % cla(handles.main_plot,'reset');
@@ -164,7 +167,7 @@ mode_index = get(handles.plot_type_chooser,'Value');
 strings = get(handles.plot_type_chooser,'String');
 mode = char(strings(mode_index));
 %
-visualize(handles,dc.cell_numbers,dc.gen_numbers,mode);
+visualize(handles,mode);
 
 % --------------------------------------------------------------------
 function Tmax_edit_Callback(hObject, eventdata, handles)
@@ -205,7 +208,28 @@ function model_chooser_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns model_chooser contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from model_chooser
+model_index = get(hObject,'Value');
+strings = get(hObject,'String');
+model = char(strings(model_index));
 
+dc = handles.data_controller;
+
+switch model
+    case 'cancer'
+        dc.set_cancer; %Tmax = 6.5; % days
+    case 'cancer_delayed'
+        dc.set_cancer_delayed; %Tmax = 13; % days        
+    case 'kidney_development'
+        dc.set_kidney_development; %Tmax = 11; % days
+    case 'disappearance'
+        dc.set_disappearance; %Tmax = 13; % days       
+end
+%
+% plot(handles.graph_pane,dc.G,'Layout','layered');
+% set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+% set(handles.graph_pane, 'xtick', [], 'ytick', []);
+%
+%figure(22);plot(dc.G,'Layout','layered');
 
 % --- Executes during object creation, after setting all properties.
 function model_chooser_CreateFcn(hObject, eventdata, handles)
@@ -254,9 +278,13 @@ function File_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % --------------------------------------------------------------------
-function visualize(handles,cell_numbers,gen_numbers,mode)
+function visualize(handles,mode)
 dc = handles.data_controller;
+cell_numbers = dc.cell_numbers;
+gen_numbers = dc.gen_numbers;
 cla(handles.main_plot,'reset');
+%
+if isempty(cell_numbers), return, end;
 %
 switch mode
     case 'N(t)'
@@ -264,7 +292,7 @@ switch mode
              semilogy(handles.main_plot,dc.t/24,cell_numbers(k,:),'linewidth',2);
              hold on;
         end
-        plot(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
+        semilogy(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
         hold off;                
         legend(handles.main_plot,[dc.cell_types 'total'],'fontsize',14);
         grid(handles.main_plot,'on');
@@ -294,12 +322,10 @@ function plot_type_chooser_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns plot_type_chooser contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from plot_type_chooser
-dc = handles.data_controller;
-if isempty(dc.cell_numbers), return, end
 mode_index = get(handles.plot_type_chooser,'Value');
 strings = get(handles.plot_type_chooser,'String');
 mode = char(strings(mode_index));
-visualize(handles,dc.cell_numbers,dc.gen_numbers,mode);
+visualize(handles,mode);
 
 % --- Executes during object creation, after setting all properties.
 function plot_type_chooser_CreateFcn(hObject, eventdata, handles)

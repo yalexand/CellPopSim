@@ -15,5 +15,7 @@
             %
             obj.Progression_probability = [1,1,1];
             %
-            %obj.dt = 1;        
+            %obj.dt = 1;
+            %
+            obj.create_graph;
         end        
