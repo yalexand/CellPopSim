@@ -10,6 +10,7 @@ classdef CellPopSim_data_controller < handle
         cells_data = [];        
         
         cell_types = [];
+        %
         cell_cycle_phases_durations = [];
         cell_cycle_G1_duration_std = [];
         cell_cycle_G2M_duration_std = [];
@@ -19,9 +20,9 @@ classdef CellPopSim_data_controller < handle
         cell_exit_probability = [];
         %
         Progression_probability = [];        
-        %        
-        % to code indices
-        TYPE = []; % same style
+        %
+        phenotypes = [];
+        %
         
         cell_buffer = [];
         crnt_buffer = [];
@@ -48,6 +49,7 @@ classdef CellPopSim_data_controller < handle
             
             addlistener(obj,'interrupt_simulations',@obj.on_interrupt_simulations);
             obj.create_hematopoietic_graph;
+            %obj.create_simple_branching_graph;
         end
 %--------------------------------------------------------------------                      
         function on_interrupt_simulations(obj,~,~)
@@ -277,17 +279,82 @@ end
             N = numel(obj.cell_types);            
             % for now linear only            
             S_range = 1:N-1;
-            T_range = 2:N;             
-            obj.G = digraph(obj.cell_types(S_range),obj.cell_types(T_range));            
+            T_range = 2:N;      
+            weights = ones(size(S_range))';
+            obj.G = digraph(obj.cell_types(S_range),obj.cell_types(T_range),weights);            
         end
 %--------------------------------------------------------------------
         function create_hematopoietic_graph(obj,~,~) %default graph            
             [~,TXT,~] = xlsread('hematopoiesis_edges.xls');
             S = TXT(:,1);
             T = TXT(:,2);
-            obj.G = digraph(S,T);
+            obj.G = digraph(S,T,ones(size(T)));
         end
 %--------------------------------------------------------------------            
-
+        function create_simple_branching_graph(obj,~,~)
+            names = { 'T1' 'T2'; ...
+                      'T2' 'T3';
+                      'T2' 'T4' };
+            S = names(:,1);
+            T = names(:,2);
+            %
+            weights = [1 0.4 0.6]';
+            %
+            obj.G = digraph(S,T,weights);
+            %
+            obj.cell_types = obj.G.Nodes.Name;
+            %
+            ph_T1 = phenotype('T1');
+                ph_T1.cell_cycle_duration = 6;
+                ph_T1.cell_cycle_duration_std = 1;
+                ph_T1.cell_cycle_Progression_threshold = 12;                   
+                ph_T1.cell_cycle_Progression_threshold_uncertainty = 0.5;        
+                ph_T1.apoptosis_probability = 0;
+                ph_T1.quescience_probability = 0; 
+            %    
+            ph_T2 = phenotype('T2');
+                ph_T2.cell_cycle_duration = 6;
+                ph_T2.cell_cycle_duration_std = 1;
+                ph_T2.cell_cycle_Progression_threshold = 12;                   
+                ph_T2.cell_cycle_Progression_threshold_uncertainty = 0.5;        
+                ph_T2.apoptosis_probability = 0;
+                ph_T2.quescience_probability = 0; 
+            %                
+            ph_T3 = phenotype('T3');
+                ph_T3.cell_cycle_duration = 6;
+                ph_T3.cell_cycle_duration_std = 1;
+                ph_T3.cell_cycle_Progression_threshold = 12;                   
+                ph_T3.cell_cycle_Progression_threshold_uncertainty = 0.5;        
+                ph_T3.apoptosis_probability = 0;
+                ph_T3.quescience_probability = 0; 
+            %                
+            ph_T4 = phenotype('T4');
+                ph_T4.cell_cycle_duration = 6;
+                ph_T4.cell_cycle_duration_std = 1;
+                ph_T4.cell_cycle_Progression_threshold = 12;                   
+                ph_T4.cell_cycle_Progression_threshold_uncertainty = 0.5;        
+                ph_T4.apoptosis_probability = 0;
+                ph_T4.quescience_probability = 0; 
+            %                            
+            obj.phenotypes{1} = ph_T1;
+            obj.phenotypes{2} = ph_T2;
+            obj.phenotypes{3} = ph_T3;
+            obj.phenotypes{4} = ph_T4;
+            %
+            % TEST CODE TO GET DIFFERENTIATION PROBABILITIES FROM
+            % CURRENT PHENOTYPE
+%             for k=1:numel(obj.cell_types)
+%                 name = obj.cell_types{k};
+%                 current_node = findnode(obj.G,name);
+%                 succ = successors(obj.G,current_node); % immediate_successors
+%                 for s=1:numel(succ)
+%                     edge = findedge(obj.G,current_node,succ(s));
+%                     % weights between current node and successors
+%                     obj.G.Edges.Weight(edge)
+%                 end
+%             end
+            %
+        end
+%--------------------------------------------------------------------
     end  
 end

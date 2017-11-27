@@ -62,7 +62,9 @@ set(handles.model_chooser,'String',data_controller.models);
 
 set(handles.plot_type_chooser,'String',{'N(t)','generation(t)'});
 
-plot(handles.graph_pane,handles.data_controller.G,'Layout','layered');
+plot(handles.graph_pane,handles.data_controller.G, ... 
+                    'Layout','layered', ...
+                    'EdgeLabel',handles.data_controller.G.Edges.Weight);
 set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
 set(handles.graph_pane, 'xtick', [], 'ytick', []);
 
@@ -229,7 +231,7 @@ switch model
         dc.set_disappearance; %Tmax = 13; % days       
 end
 %
-plot(handles.graph_pane,dc.G,'Layout','layered');
+plot(handles.graph_pane,dc.G,'Layout','layered','EdgeLabel',dc.G.Edges.Weight);
 set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
 set(handles.graph_pane, 'xtick', [], 'ytick', []);
 
