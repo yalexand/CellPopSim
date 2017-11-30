@@ -302,26 +302,26 @@ end
             %
             obj.G = digraph(S,T,weights);
             %
-            obj.cell_types = obj.G.Nodes.Name;
+            obj.cell_types = obj.G.Nodes.Name';
             %
             ph_T1 = phenotype('T1');
-                ph_T1.cell_cycle_duration = 6;
+                ph_T1.cell_cycle_duration = 18;
                 ph_T1.cell_cycle_duration_std = 1;
-                ph_T1.cell_cycle_Progression_threshold = 12;                   
+                ph_T1.cell_cycle_Progression_threshold = 8;                   
                 ph_T1.cell_cycle_Progression_threshold_uncertainty = 0.5;        
                 ph_T1.apoptosis_probability = 0;
                 ph_T1.quescience_probability = 0; 
             %    
             ph_T2 = phenotype('T2');
-                ph_T2.cell_cycle_duration = 6;
+                ph_T2.cell_cycle_duration = 19;
                 ph_T2.cell_cycle_duration_std = 1;
-                ph_T2.cell_cycle_Progression_threshold = 12;                   
+                ph_T2.cell_cycle_Progression_threshold = 10;                   
                 ph_T2.cell_cycle_Progression_threshold_uncertainty = 0.5;        
                 ph_T2.apoptosis_probability = 0;
                 ph_T2.quescience_probability = 0; 
             %                
             ph_T3 = phenotype('T3');
-                ph_T3.cell_cycle_duration = 6;
+                ph_T3.cell_cycle_duration = 15;
                 ph_T3.cell_cycle_duration_std = 1;
                 ph_T3.cell_cycle_Progression_threshold = 12;                   
                 ph_T3.cell_cycle_Progression_threshold_uncertainty = 0.5;        
@@ -329,7 +329,7 @@ end
                 ph_T3.quescience_probability = 0; 
             %                
             ph_T4 = phenotype('T4');
-                ph_T4.cell_cycle_duration = 6;
+                ph_T4.cell_cycle_duration = 22;
                 ph_T4.cell_cycle_duration_std = 1;
                 ph_T4.cell_cycle_Progression_threshold = 12;                   
                 ph_T4.cell_cycle_Progression_threshold_uncertainty = 0.5;        
