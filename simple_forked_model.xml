@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<settings>
+   <dt>1</dt>
+   <Tmax>13</Tmax>
+   <S>
+      <item>'T1'</item>
+      <item>'T2'</item>
+      <item>'T2'</item>
+      <item>'T4'</item>
+      <item>'T4'</item>
+   </S>
+   <T>
+      <item>'T2'</item>
+      <item>'T3'</item>
+      <item>'T4'</item>
+      <item>'T5'</item>
+      <item>'T6'</item>
+   </T>
+   <weights>[1;0.6;0.4;0.3;0.7]</weights>
+   <phenotype_properties_names>
+      <item>Tc</item>
+      <item>Tc_std</item>
+      <item>Gt</item>
+      <item>Gt_std</item>
+      <item>A</item>
+      <item>Q</item>
+   </phenotype_properties_names>
+   <phenotype_properties>[12 3 8 0.1 0.2 0;13 3 4 0.1 0 0;14 3 4 0.1 0.8 0;13 3 6 0.1 0.2 0;13 3 6 0.1 0.8 0;13 3 6 0.1 0.8 0]</phenotype_properties>
+</settings>

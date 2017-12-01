@@ -178,7 +178,9 @@ end
                   %
                   succ = successors(obj.G,curnt); % immediate_successors
                   N_succ = numel(succ);
-                  if 1==N_succ
+                  if 0==N_succ
+                      return;
+                  elseif 1==N_succ
                       nxt = succ;
                   else
                       w = zeros(1,N_succ); % define weights
@@ -187,7 +189,7 @@ end
                         % weights between current node and successors
                         w(s) = obj.G.Edges.Weight(edge);
                       end
-                      nxt = roulette_wheel(w,1);
+                      nxt = curnt + roulette_wheel(w,1);
                   end
                   %
                   out_cell = obj.set_type_index(out_cell,nxt);
