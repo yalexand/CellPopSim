@@ -22,7 +22,7 @@ function varargout = CellPopSim_GUI(varargin)
 
 % Edit the above text to modify the response to help CellPopSim_GUI
 
-% Last Modified by GUIDE v2.5 21-Nov-2017 14:10:54
+% Last Modified by GUIDE v2.5 30-Nov-2017 18:07:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -58,8 +58,6 @@ handles.output = hObject;
 data_controller = varargin{1};
 handles.data_controller = data_controller;
 
-set(handles.model_chooser,'String',data_controller.models);
-
 set(handles.plot_type_chooser,'String',{'N(t)','generation(t)'});
 
 plot(handles.graph_pane,handles.data_controller.G, ... 
@@ -73,6 +71,15 @@ set(handles.Tmax_edit,'String',num2str(handles.Tmax));
 
 handles.dt = data_controller.dt;
 set(handles.dt_edit,'String',num2str(handles.dt));
+
+set(handles.edges_table,'ColumnName',{'S','T','weight'});
+set(handles.edges_table,'Data',[data_controller.S data_controller.T num2cell(data_controller.weights)]);
+
+set(handles.phenotypes_table,'RowName',data_controller.G.Nodes.Name);
+set(handles.phenotypes_table,'ColumnName',data_controller.phenotype_properties_names');
+set(handles.phenotypes_table,'Data',data_controller.phenotype_properties);
+
+%%%
 
 % Update handles structure
 guidata(hObject, handles);
@@ -99,68 +106,12 @@ function test_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
 
-% % % % % % dc.set_kidney_development;
-% % % % % % Nini = 1;
-% % % % % % %
-% % % % % % Tmax = 18*24;
-% % % % % % %
-% % % % % % [cell_numbers, gen_numbers] = dc.simulate(Nini,Tmax);
-% % % % % % figure;
-% % % % % % for k=1:numel(dc.cell_types)
-% % % % % %      semilogy(dc.t/24,cell_numbers(k,:),'linewidth',2);
-% % % % % %      hold on;
-% % % % % % end
-% % % % % % plot(dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
-% % % % % % %%%%%%%%%%%%%
-% % % % % % dpc = [11.5 12 12.5 13.5 14 14.5 15.5 16.5 17.5];
-% % % % % % nvox = [420862 1170317 1833695 4488798 6602763 9235365 17267749 24330325 36193224];
-% % % % % % um = 1e-6;
-% % % % % % voxvol = 4.17*um^3; % um^3
-% % % % % % R = 6*um; % 7 microns radius of cell
-% % % % % % v = (4/3*pi*R^3)/voxvol; % volume of cell in voxels
-% % % % % % semilogy(dpc,nvox/v,'ko-','markersize',12,'linewidth',2);
-% % % % % % hold on;
-% % % % % % %%%%%%%%%%%%%%
-% % % % % % % tau = log(2)/(19.7/24) % tau for Tc = 20 hours
-% % % % % % tau = 1/0.8441;
-% % % % % % model = exp((dc.t/24)/tau)*(3/13.5);
-% % % % % % semilogy(dc.t/24,model,'b.-');
-% % % % % % %%%%%%%%%%%%%
-% % % % % % hold off;
-% % % % % % grid on;
-% % % % % % xlabel('days past inception');
-% % % % % % ylabel('cell N(t)');
-% % % % % % legend([dc.cell_types 'total' 'Lefevre 2017' '2^{t/T_c} for CM']);
-% % % % % % 
-% % % % % % figure;
-% % % % % % for k=1:numel(dc.cell_types)
-% % % % % %      plot(dc.t/24,gen_numbers(k,:),'linewidth',2);
-% % % % % %      hold on;
-% % % % % % end
-% % % % % % hold off;
-% % % % % % grid on;
-
-model_index = get(handles.model_chooser,'Value');
-strings = get(handles.model_chooser,'String');
-model = char(strings(model_index));
-
 Nini = 1;
-
 Tmax = str2double(get(handles.Tmax_edit,'String'));
-
-switch model
-    case 'cancer'
-        dc.set_cancer; %Tmax = 6.5; % days
-    case 'cancer_delayed'
-        dc.set_cancer_delayed; %Tmax = 13; % days        
-    case 'kidney_development'
-        dc.set_kidney_development; %Tmax = 11; % days
-    case 'disappearance'
-        dc.set_disappearance; %Tmax = 13; % days       
-end
 
 dc.simulate(Nini,24*Tmax);
 handles.data_controller = dc;
+
 % Update handles structure
 guidata(hObject, handles);
 
@@ -206,55 +157,12 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on selection change in model_chooser.
-function model_chooser_Callback(hObject, eventdata, handles)
-% hObject    handle to model_chooser (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns model_chooser contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from model_chooser
-model_index = get(hObject,'Value');
-strings = get(hObject,'String');
-model = char(strings(model_index));
-
-dc = handles.data_controller;
-
-switch model
-    case 'cancer'
-        dc.set_cancer; %Tmax = 6.5; % days
-    case 'cancer_delayed'
-        dc.set_cancer_delayed; %Tmax = 13; % days        
-    case 'kidney_development'
-        dc.set_kidney_development; %Tmax = 11; % days
-    case 'disappearance'
-        dc.set_disappearance; %Tmax = 13; % days       
-end
-%
-plot(handles.graph_pane,dc.G,'Layout','layered','EdgeLabel',dc.G.Edges.Weight);
-set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
-set(handles.graph_pane, 'xtick', [], 'ytick', []);
-
-% --- Executes during object creation, after setting all properties.
-function model_chooser_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to model_chooser (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 % --- Executes on button press in cancel_simulation.
 function cancel_simulation_Callback(hObject, eventdata, handles)
 % hObject    handle to cancel_simulation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
-% dc.interrupt_simulations;
 notify(dc,'interrupt_simulations');
 
 % --------------------------------------------------------------------
@@ -292,25 +200,25 @@ if isempty(cell_numbers), return, end;
 %
 switch mode
     case 'N(t)'
-        for k=1:numel(dc.cell_types)
+        for k=1:size(dc.phenotype_properties,1)
              semilogy(handles.main_plot,dc.t/24,cell_numbers(k,:),'linewidth',2);
              hold on;
         end
         semilogy(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
         hold off;                
-        legend(handles.main_plot,[dc.cell_types 'total'],'fontsize',14);
+        legend(handles.main_plot,[dc.G.Nodes.Name' 'total'],'fontsize',14);
         grid(handles.main_plot,'on');
         xlabel(handles.main_plot,'days past inception','fontsize',14);
         ylabel(handles.main_plot,'cell N(t)','fontsize',14);
     case 'generation(t)'
-        for k=1:numel(dc.cell_types)            
+        for k=1:size(dc.phenotype_properties,1)
              gens = gen_numbers(k,:);
              range = gens>0;
              plot(handles.main_plot,dc.t(range)/24,gens(range),'linewidth',2);                          
              hold on;
         end
         hold off;
-        legend(handles.main_plot,dc.cell_types,'fontsize',14);
+        legend(handles.main_plot,dc.G.Nodes.Name','fontsize',14);
         grid(handles.main_plot,'on');
         xlabel(handles.main_plot,'days past inception','fontsize',14);
         ylabel(handles.main_plot,'cell generation(t)','fontsize',14);
@@ -344,7 +252,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function dt_edit_Callback(hObject, eventdata, handles)
 % hObject    handle to dt_edit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -376,3 +283,68 @@ function dt_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in update_model.
+function update_model_Callback(hObject, eventdata, handles)
+% hObject    handle to update_model (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+dc.phenotype_properties = get(handles.phenotypes_table,'Data');
+%
+D = get(handles.edges_table,'Data');
+dc.weights = cell2mat(D(:,3));
+
+% --------------------------------------------------------------------
+function load_model_Callback(hObject, eventdata, handles)
+% hObject    handle to load_model (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+[fname, fpath] = uigetfile('*.xml','Load Model..',pwd);
+if fpath == 0; return; end
+filespec = fullfile(fpath,fname);
+try
+    dc.load_model(filespec);
+    plot(handles.graph_pane,dc.G, ... 
+                    'Layout','layered', ...
+                    'EdgeLabel',dc.G.Edges.Weight);    
+    set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+    set(handles.graph_pane, 'xtick', [], 'ytick', []);                
+    
+    set(handles.edges_table,'Data',[dc.S dc.T num2cell(dc.weights)]);
+    set(handles.edges_table,'ColumnName',{'S','T','weight'});
+    
+    set(handles.phenotypes_table,'RowName',dc.G.Nodes.Name);
+    set(handles.phenotypes_table,'ColumnName',dc.phenotype_properties_names');
+    set(handles.phenotypes_table,'Data',dc.phenotype_properties); 
+    %
+    handles.dt = dc.dt;
+    handles.Tmax = dc.Tmax;
+    set(handles.dt_edit,'String',num2str(handles.dt));
+    set(handles.Tmax_edit,'String',num2str(handles.Tmax));
+catch
+    errordlg('Error while trying to load model');
+end
+
+
+% --------------------------------------------------------------------
+function save_model_Callback(hObject, eventdata, handles)
+% hObject    handle to save_model (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+[fname, fpath] = uiputfile('*.xml','Save Model as..',pwd);
+if fpath == 0; return; end
+filespec = fullfile(fpath,fname);
+try
+    dc.save_model(filespec);
+catch
+    errordlg('Error while trying to save model');
+end
+
+
+
+
+
