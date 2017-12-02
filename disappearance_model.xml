@@ -2,6 +2,7 @@
 <settings>
    <dt>1</dt>
    <Tmax>13</Tmax>
+   <Nini>1</Nini>
    <S>
       <item>'T1'</item>
       <item>'T2'</item>
@@ -19,5 +20,9 @@
       <item>A</item>
       <item>Q</item>
    </phenotype_properties_names>
-   <phenotype_properties>[12 3 8 0.1 0 0;13 3 6 0.1 0 0;14 3 4 0.1 0.7 0;]</phenotype_properties>
+   <phenotype_properties>[12 3 8 0.1 0 0;13 3 6 0.1 0 0;14 3 4 0.1 0.7 0]</phenotype_properties>
+   <experimental_curve/>
+   <experimental_curve_name/>
+   <experimental_curve_scale/>
+   <experimental_curve_shift/>
 </settings>

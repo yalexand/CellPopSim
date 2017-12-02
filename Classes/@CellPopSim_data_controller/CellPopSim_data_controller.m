@@ -8,6 +8,8 @@ classdef CellPopSim_data_controller < handle
         
         Tmax = 6;       % days
         
+        Nini = 1;
+        
         t = [];         % global time
                 
         cells_data = [];        
@@ -35,6 +37,11 @@ classdef CellPopSim_data_controller < handle
         
         cell_numbers = [];
         gen_numbers = [];
+        
+        experimental_curve = [];
+        experimental_curve_name = [];
+        experimental_curve_scale = [];
+        experimental_curve_shift = [];
                 
     end
 %--------------------------------------------------------------------                  
@@ -53,12 +60,17 @@ classdef CellPopSim_data_controller < handle
             settings = [];
             %
             settings.dt = obj.dt;
-            settings.Tmax = obj.Tmax;            
+            settings.Tmax = obj.Tmax;
+            settings.Nini = obj.Nini;
             settings.S = obj.S;
             settings.T = obj.T;
             settings.weights = obj.weights;
             settings.phenotype_properties_names = obj.phenotype_properties_names;
-            settings.phenotype_properties = obj.phenotype_properties;            
+            settings.phenotype_properties = obj.phenotype_properties; 
+            settings.experimental_curve = obj.experimental_curve;
+            settings.experimental_curve_name = obj.experimental_curve_name;
+            settings.experimental_curve_scale = obj.experimental_curve_scale;
+            settings.experimental_curve_shift = obj.experimental_curve_shift;           
             %
             xml_write(fullfilename, settings);            
         end        
@@ -68,12 +80,17 @@ classdef CellPopSim_data_controller < handle
             [ settings, ~ ] = xml_read(fullfilename);    
             %
             obj.dt = settings.dt;
-            obj.Tmax = settings.Tmax;            
+            obj.Tmax = settings.Tmax;
+            obj.Nini = settings.Nini;
             obj.S = settings.S';
             obj.T = settings.T';
             obj.weights = settings.weights;
             obj.phenotype_properties_names = settings.phenotype_properties_names;
             obj.phenotype_properties = settings.phenotype_properties;
+            obj.experimental_curve = settings.experimental_curve;
+            obj.experimental_curve_name = settings.experimental_curve_name;
+            obj.experimental_curve_scale = settings.experimental_curve_scale;
+            obj.experimental_curve_shift = settings.experimental_curve_shift;              
             %
             obj.G = digraph(obj.S,obj.T,obj.weights);
         end                
@@ -189,7 +206,7 @@ end
                         % weights between current node and successors
                         w(s) = obj.G.Edges.Weight(edge);
                       end
-                      nxt = curnt + roulette_wheel(w,1);
+                      nxt = succ(roulette_wheel(w,1));
                   end
                   %
                   out_cell = obj.set_type_index(out_cell,nxt);
@@ -197,7 +214,7 @@ end
               end                              
         end  
 %--------------------------------------------------------------------    
-        function simulate(obj,Nini,Tmax,~)
+        function simulate(obj,Tmax,~)
             %
             obj.cell_buffer = [];
             obj.crnt_buffer = [];
@@ -208,16 +225,16 @@ end
             obj.next_buffer = zeros(2^21,4,'single');                        
             %
             ini_cells = [];
-            for k=1:Nini
+            for k=1:obj.Nini
                 Cell = obj.get_ini_cell();
                 ini_cells = [ ini_cells; Cell];
             end
             %
-            obj.crnt_buffer(1:Nini,:) = ini_cells;
-            obj.cell_buffer(1:Nini,:) = ini_cells;            
+            obj.crnt_buffer(1:obj.Nini,:) = ini_cells;
+            obj.cell_buffer(1:obj.Nini,:) = ini_cells;            
             %            
-            n_cells_crnt = Nini;
-            Ncells = Nini;
+            n_cells_crnt = obj.Nini;
+            Ncells = obj.Nini;
             %            
             tic            
             hw = waitbar(0,'Creating cell pool - please wait');   

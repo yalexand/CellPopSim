@@ -22,7 +22,7 @@ function varargout = CellPopSim_GUI(varargin)
 
 % Edit the above text to modify the response to help CellPopSim_GUI
 
-% Last Modified by GUIDE v2.5 02-Dec-2017 00:52:49
+% Last Modified by GUIDE v2.5 02-Dec-2017 16:29:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -80,6 +80,11 @@ set(handles.phenotypes_table,'ColumnName',data_controller.phenotype_properties_n
 set(handles.phenotypes_table,'Data',data_controller.phenotype_properties);
 
 set(handles.logY,'Value',1);
+
+set(handles.show_experimental_curve,'Value',0);
+
+set(handles.main_plot, 'xticklabel', [], 'yticklabel', []);
+set(handles.main_plot, 'xtick', [], 'ytick', []);
 %%%
 
 % Update handles structure
@@ -107,10 +112,8 @@ function test_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
 
-Nini = 1;
 Tmax = str2double(get(handles.Tmax_edit,'String'));
-
-dc.simulate(Nini,24*Tmax);
+dc.simulate(24*Tmax);
 handles.data_controller = dc;
 
 % Update handles structure
@@ -201,6 +204,9 @@ if isempty(cell_numbers), return, end;
 %
 is_logY = get(handles.logY,'Value');
 %
+show_experimental_curve = ... 
+    get(handles.show_experimental_curve,'Value') && ~isempty(dc.experimental_curve);
+%
 switch mode
     case 'N(t)'
         for k=1:size(dc.phenotype_properties,1)
@@ -217,8 +223,25 @@ switch mode
         else
             plot(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
         end
-        hold off;                
-        legend(handles.main_plot,[dc.G.Nodes.Name' 'total'],'fontsize',14);
+        %
+        if show_experimental_curve
+            te = dc.experimental_curve(:,1)/24;
+            Ne = dc.experimental_curve(:,2);
+            hold on;
+            if is_logY
+                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+            else
+                plot(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+            end            
+        end
+        %
+        hold off; 
+        if show_experimental_curve
+            legend(handles.main_plot, ...
+                [dc.G.Nodes.Name' 'total' dc.experimental_curve_name],'fontsize',14);
+        else
+            legend(handles.main_plot,[dc.G.Nodes.Name' 'total'],'fontsize',14);
+        end
         grid(handles.main_plot,'on');
         xlabel(handles.main_plot,'days past inception','fontsize',14);
         ylabel(handles.main_plot,'cell N(t)','fontsize',14);
@@ -307,6 +330,12 @@ dc.phenotype_properties = get(handles.phenotypes_table,'Data');
 %
 D = get(handles.edges_table,'Data');
 dc.weights = cell2mat(D(:,3));
+dc.G = digraph(dc.S,dc.T,dc.weights);
+plot(handles.graph_pane,handles.data_controller.G, ... 
+                    'Layout','layered', ...
+                    'EdgeLabel',handles.data_controller.G.Edges.Weight);
+set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+set(handles.graph_pane, 'xtick', [], 'ytick', []);
 
 % --------------------------------------------------------------------
 function load_model_Callback(hObject, eventdata, handles)
@@ -336,6 +365,23 @@ try
     handles.Tmax = dc.Tmax;
     set(handles.dt_edit,'String',num2str(handles.dt));
     set(handles.Tmax_edit,'String',num2str(handles.Tmax));
+    %
+    % show experimental curve if present
+    is_logY = get(handles.logY,'Value');
+       if ~isempty(dc.experimental_curve)
+            te = dc.experimental_curve(:,1)/24;
+            Ne = dc.experimental_curve(:,2);
+            if is_logY
+                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+            else
+                plot(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+            end
+            grid(handles.main_plot,'on');
+            xlabel(handles.main_plot,'days past inception','fontsize',14);
+            ylabel(handles.main_plot,'cell N(t)','fontsize',14);
+           legend(handles.main_plot,{dc.experimental_curve_name},'fontsize',14);           
+            set(handles.show_experimental_curve,'Value',1);
+        end
 catch
     errordlg('Error while trying to load model');
 end
@@ -364,4 +410,42 @@ function logY_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of logY
+plot_type_chooser_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function load_experimental_curve_Callback(hObject, eventdata, handles)
+% hObject    handle to load_experimental_curve (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+[fname, fpath] = uigetfile({'*.xls;*.xlsx;*.csv'},'Load experimental curve..',pwd);
+try
+    filespec = fullfile(fpath,fname);
+    [NUM,TXT,RAW]=xlsread(filespec);
+    dc.experimental_curve = NUM;
+    str = strrep(fname,'.xlsx',' ');
+        str = strrep(str,'.xls',' ');
+            str = strrep(str,'.csv',' ');
+                str = strrep(str,'_',' ');
+    dc.experimental_curve_name = str;
+    disp(fname);
+catch err
+    disp(err.message)
+end
+set(handles.show_experimental_curve,'Value',1);
+plot_type_chooser_Callback(hObject, eventdata, handles);
+
+
+
+
+
+
+% --- Executes on button press in show_experimental_curve.
+function show_experimental_curve_Callback(hObject, eventdata, handles)
+% hObject    handle to show_experimental_curve (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of show_experimental_curve
 plot_type_chooser_Callback(hObject, eventdata, handles);
