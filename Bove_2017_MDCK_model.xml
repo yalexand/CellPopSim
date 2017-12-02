@@ -20,7 +20,7 @@
       <item>A</item>
       <item>Q</item>
    </phenotype_properties_names>
-   <phenotype_properties>[18 3 2 0.1 0 0;18 2 3.2 0.1 0.18 0;18 3 40 0.1 0.5 0]</phenotype_properties>
+   <phenotype_properties>[23 5 2 0.01 0 0;18 5 2.87 0.1 0.06 0;18 5 40 0.1 0.5 0]</phenotype_properties>
    <experimental_curve>[0 145;5 148;10 149;15 150;20 175;25 210;30 260;35 307;40 375;45 450;50 510;55 600;60 675;65 730;70 775;75 815;80 850]</experimental_curve>
    <experimental_curve_name>Bove 2017 MDCK</experimental_curve_name>
    <experimental_curve_scale/>
