@@ -22,7 +22,7 @@ function varargout = CellPopSim_GUI(varargin)
 
 % Edit the above text to modify the response to help CellPopSim_GUI
 
-% Last Modified by GUIDE v2.5 30-Nov-2017 18:07:40
+% Last Modified by GUIDE v2.5 02-Dec-2017 00:52:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -79,6 +79,7 @@ set(handles.phenotypes_table,'RowName',data_controller.G.Nodes.Name);
 set(handles.phenotypes_table,'ColumnName',data_controller.phenotype_properties_names');
 set(handles.phenotypes_table,'Data',data_controller.phenotype_properties);
 
+set(handles.logY,'Value',1);
 %%%
 
 % Update handles structure
@@ -198,13 +199,24 @@ cla(handles.main_plot,'reset');
 %
 if isempty(cell_numbers), return, end;
 %
+is_logY = get(handles.logY,'Value');
+%
 switch mode
     case 'N(t)'
         for k=1:size(dc.phenotype_properties,1)
-             semilogy(handles.main_plot,dc.t/24,cell_numbers(k,:),'linewidth',2);
+             if is_logY
+                semilogy(handles.main_plot,dc.t/24,cell_numbers(k,:),'linewidth',2);
+             else
+                plot(handles.main_plot,dc.t/24,cell_numbers(k,:),'linewidth',2);                 
+             end
              hold on;
         end
-        semilogy(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
+        %
+        if is_logY
+            semilogy(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
+        else
+            plot(handles.main_plot,dc.t/24,sum(cell_numbers,1),'r:','linewidth',2);
+        end
         hold off;                
         legend(handles.main_plot,[dc.G.Nodes.Name' 'total'],'fontsize',14);
         grid(handles.main_plot,'on');
@@ -345,6 +357,11 @@ catch
 end
 
 
+% --- Executes on button press in logY.
+function logY_Callback(hObject, eventdata, handles)
+% hObject    handle to logY (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-
-
+% Hint: get(hObject,'Value') returns toggle state of logY
+plot_type_chooser_Callback(hObject, eventdata, handles);

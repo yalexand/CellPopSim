@@ -251,8 +251,13 @@ end
                 disp([g Tmax_cur Ncells]);
                 %
                 if Tmax_cur > Tmax, break, end
-                %                                
+                %   
+                try
                 if ~isempty(hw), waitbar(Tmax_cur/Tmax,hw); drawnow, end
+                catch
+                    Tmax_cur
+                    break;
+                end
                 %
                 if obj.simulations_interrupt_flag
                     if ~isempty(hw), delete(hw), drawnow; end            
