@@ -261,18 +261,18 @@ switch mode
         
     case 'total #'
         Y = sum(cell_numbers,2);
-        Y = Y/sum(Y);
+        Y = Y/sum(Y)*100;
         for k=1:size(dc.phenotype_properties,1)
              plot(handles.main_plot,[k k],[0 Y(k)],'linewidth',20);                          
              hold on;
         end
         hold off;
-        axis([0 numel(Y)+1 0 1]);
+        axis([0 numel(Y)+1 0 100]);
         grid(handles.main_plot,'on');
         set(handles.main_plot,'XGrid','off')
         legend(handles.main_plot,dc.G.Nodes.Name','fontsize',14);
         set(handles.main_plot,'xticklabel',[]);
-        ylabel(handles.main_plot,'cell number ratio','fontsize',12);
+        ylabel(handles.main_plot,'total cell number %','fontsize',12);
 end
 % --------------------------------------------------------------------
 
@@ -397,6 +397,10 @@ try
             ylabel(handles.main_plot,'cell N(t)','fontsize',12);
            legend(handles.main_plot,{dc.experimental_curve_name},'fontsize',14);           
             set(handles.show_experimental_curve,'Value',1);
+       else
+           cla(handles.main_plot,'reset');
+           set(handles.main_plot, 'xticklabel', [], 'yticklabel', []);
+           set(handles.main_plot, 'xtick', [], 'ytick', []);
         end
 catch
     errordlg('Error while trying to load model');
