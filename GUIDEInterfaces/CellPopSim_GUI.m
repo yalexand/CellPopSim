@@ -58,7 +58,7 @@ handles.output = hObject;
 data_controller = varargin{1};
 handles.data_controller = data_controller;
 
-set(handles.plot_type_chooser,'String',{'N(t)','generation(t)'});
+set(handles.plot_type_chooser,'String',{'N(t)','generation(t)','total #'});
 
 plot(handles.graph_pane,handles.data_controller.G, ... 
                     'Layout','layered', ...
@@ -243,8 +243,9 @@ switch mode
             legend(handles.main_plot,[dc.G.Nodes.Name' 'total'],'fontsize',14);
         end
         grid(handles.main_plot,'on');
-        xlabel(handles.main_plot,'days past inception','fontsize',14);
-        ylabel(handles.main_plot,'cell N(t)','fontsize',14);
+        xlabel(handles.main_plot,'days past inception','fontsize',12);
+        ylabel(handles.main_plot,'cell N(t)','fontsize',12);
+        
     case 'generation(t)'
         for k=1:size(dc.phenotype_properties,1)
              gens = gen_numbers(k,:);
@@ -255,8 +256,23 @@ switch mode
         hold off;
         legend(handles.main_plot,dc.G.Nodes.Name','fontsize',14);
         grid(handles.main_plot,'on');
-        xlabel(handles.main_plot,'days past inception','fontsize',14);
-        ylabel(handles.main_plot,'cell generation(t)','fontsize',14);
+        xlabel(handles.main_plot,'days past inception','fontsize',12);
+        ylabel(handles.main_plot,'cell generation(t)','fontsize',12);
+        
+    case 'total #'
+        Y = sum(cell_numbers,2);
+        Y = Y/sum(Y);
+        for k=1:size(dc.phenotype_properties,1)
+             plot(handles.main_plot,[k k],[0 Y(k)],'linewidth',20);                          
+             hold on;
+        end
+        hold off;
+        axis([0 numel(Y)+1 0 1]);
+        grid(handles.main_plot,'on');
+        set(handles.main_plot,'XGrid','off')
+        legend(handles.main_plot,dc.G.Nodes.Name','fontsize',14);
+        set(handles.main_plot,'xticklabel',[]);
+        ylabel(handles.main_plot,'cell number ratio','fontsize',12);
 end
 % --------------------------------------------------------------------
 
@@ -377,8 +393,8 @@ try
                 plot(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
             end
             grid(handles.main_plot,'on');
-            xlabel(handles.main_plot,'days past inception','fontsize',14);
-            ylabel(handles.main_plot,'cell N(t)','fontsize',14);
+            xlabel(handles.main_plot,'days past inception','fontsize',12);
+            ylabel(handles.main_plot,'cell N(t)','fontsize',12);
            legend(handles.main_plot,{dc.experimental_curve_name},'fontsize',14);           
             set(handles.show_experimental_curve,'Value',1);
         end
