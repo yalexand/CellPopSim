@@ -25,7 +25,11 @@ classdef CellPopSim_gui
             set(obj.window,'Visible','on');
             set(obj.window,'CloseRequestFcn',@obj.close_request_fcn);                        
             % WinOnTop(obj.window,true);
-             
+            
+            if isdeployed
+            waitfor(obj.window);
+            end
+            
         end
         %        
         function close_request_fcn(obj,~,~)            
