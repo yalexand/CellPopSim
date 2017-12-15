@@ -113,6 +113,7 @@ function test_button_Callback(hObject, eventdata, handles)
 dc = handles.data_controller;
 
 Tmax = str2double(get(handles.Tmax_edit,'String'));
+dc.Tmax = Tmax;
 dc.simulate(24*Tmax);
 handles.data_controller = dc;
 
@@ -146,6 +147,8 @@ else
     value = handles.Tmax;
     set(hObject,'String',num2str(value));
 end
+dc = handles.data_controller;
+dc.Tmax = handles.Tmax;
 uiresume(handles.CellPopSim);
 
 % --- Executes during object creation, after setting all properties.
@@ -204,7 +207,7 @@ function File_Callback(hObject, eventdata, handles)
 % --------------------------------------------------------------------
 function visualize(handles,mode)
 dc = handles.data_controller;
-cell_numbers = dc.cell_numbers;
+cell_numbers = dc.cell_numbers*dc.experimental_curve_scale;
 gen_numbers = dc.gen_numbers;
 cla(handles.main_plot,'reset');
 %
@@ -233,7 +236,7 @@ switch mode
         end
         %
         if show_experimental_curve
-            te = dc.experimental_curve(:,1)/24;
+            te = (dc.experimental_curve(:,1) - dc.experimental_curve_shift)/24;
             Ne = dc.experimental_curve(:,2);
             hold on;
             if is_logY
@@ -447,7 +450,7 @@ function load_experimental_curve_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
-[fname, fpath] = uigetfile({'*.xls;*.xlsx;*.csv'},'Load experimental curve..',pwd);
+[fname, fpath] = uigetfile({'*.xls;*.xlsx;*.csv'},'Load experimental curve..',dc.DefaultDirectory);
 try
     filespec = fullfile(fpath,fname);
     [NUM,TXT,RAW]=xlsread(filespec);

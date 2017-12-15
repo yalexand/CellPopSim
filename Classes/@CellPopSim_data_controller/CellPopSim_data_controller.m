@@ -44,8 +44,8 @@ classdef CellPopSim_data_controller < handle
         
         experimental_curve = [];
         experimental_curve_name = [];
-        experimental_curve_scale = [];
-        experimental_curve_shift = [];
+        experimental_curve_scale = 1;
+        experimental_curve_shift = 0; % days
         
         DefaultDirectory = ['C:' filesep];
                 

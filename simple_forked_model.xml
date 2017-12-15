@@ -29,6 +29,6 @@
    <phenotype_properties>[12 3 8 0.1 0.2 0;13 3 4 0.1 0 0;14 3 4 0.1 0.8 0;13 3 6 0.1 0.2 0;13 3 6 0.1 0.8 0;13 3 6 0.1 0.8 0]</phenotype_properties>
    <experimental_curve/>
    <experimental_curve_name/>
-   <experimental_curve_scale/>
-   <experimental_curve_shift/>
+   <experimental_curve_scale>1</experimental_curve_scale>
+   <experimental_curve_shift>0</experimental_curve_shift>
 </settings>
