@@ -174,18 +174,26 @@ function save_current_plot_as_fig_Callback(hObject, eventdata, handles)
 % hObject    handle to save_current_plot_as_fig (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+root_dir = pwd;
+cd(dc.DefaultDirectory);
 
 [filename,pathname] = uiputfile('*.fig','Save figure');
 if pathname == 0 %if the user pressed cancelled, then we exit this callback 
+    cd(root_dir);
  return 
 end 
+
 saveName = fullfile(pathname,filename);
 
 f_new = figure;
 ax_new = copyobj(handles.main_plot,f_new);
-set(ax_new,'Position','default')
+set(ax_new,'Position','default');
+legend(ax_new,'-DynamicLegend');
 saveas(f_new,saveName,'fig');
 close(f_new);
+%
+cd(root_dir);
 
 % --------------------------------------------------------------------
 function File_Callback(hObject, eventdata, handles)
@@ -359,7 +367,7 @@ function load_model_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
-[fname, fpath] = uigetfile('*.xml','Load Model..',pwd);
+[fname, fpath] = uigetfile('*.xml','Load Model..',dc.DefaultDirectory);
 if fpath == 0; return; end
 filespec = fullfile(fpath,fname);
 try

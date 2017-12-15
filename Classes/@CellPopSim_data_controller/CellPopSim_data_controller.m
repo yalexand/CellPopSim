@@ -2,7 +2,11 @@
 % God's version
 classdef CellPopSim_data_controller < handle
            
-    properties
+    properties(Constant)
+        data_settings_filename = 'CellPopSim_data_settings.xml';
+    end
+    
+    properties(Transient)
         
         dt = 0.25;      % 15 minutes
         
@@ -42,6 +46,8 @@ classdef CellPopSim_data_controller < handle
         experimental_curve_name = [];
         experimental_curve_scale = [];
         experimental_curve_shift = [];
+        
+        DefaultDirectory = ['C:' filesep];
                 
     end
 %--------------------------------------------------------------------                  
@@ -54,6 +60,10 @@ classdef CellPopSim_data_controller < handle
         function obj = CellPopSim_data_controller(varargin)             
             addlistener(obj,'interrupt_simulations',@obj.on_interrupt_simulations);
             obj.create_hematopoietic_graph;
+            try 
+                obj.load_settings([pwd filesep obj.data_settings_filename]);
+            catch
+            end            
         end
 %--------------------------------------------------------------------                      
         function save_model(obj,fullfilename,~)
@@ -93,13 +103,22 @@ classdef CellPopSim_data_controller < handle
             obj.experimental_curve_shift = settings.experimental_curve_shift;              
             %
             obj.G = digraph(obj.S,obj.T,obj.weights);
+            %
+            [PATHSTR,~,~] = fileparts(fullfilename);
+            obj.DefaultDirectory = PATHSTR;
         end                
 %--------------------------------------------------------------------
         function on_interrupt_simulations(obj,~,~)
             obj.simulations_interrupt_flag = true;
         end        
 %--------------------------------------------------------------------                      
-        function close_request_fcn(obj,~,~)
+        function delete(obj)
+            try
+                obj.save_settings([pwd filesep obj.data_settings_filename]);
+            catch
+                disp('Error while trying to save settings: not saved');
+            end
+            %
             obj.cell_buffer = [];
             obj.crnt_buffer = [];
             obj.next_buffer = [];
@@ -341,6 +360,18 @@ end
             %
             obj.phenotype_properties = zeros(numel(obj.G.Nodes.Name),numel(obj.phenotype_properties_names));
         end
-%--------------------------------------------------------------------            
+%--------------------------------------------------------------------                       
+        function save_settings(obj,fullfilename,~)
+            settings = [];
+            settings.DefaultDirectory = obj.DefaultDirectory;
+            xml_write(fullfilename, settings);            
+        end        
+%--------------------------------------------------------------------                      
+        function load_settings(obj,fullfilename,~)
+            if ~exist(fullfilename,'file'), return, end;
+            [ settings, ~ ] = xml_read(fullfilename);    
+            obj.DefaultDirectory = settings.DefaultDirectory;
+        end                
+%--------------------------------------------------------------------
     end  
 end
