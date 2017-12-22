@@ -412,7 +412,9 @@ try
            cla(handles.main_plot,'reset');
            set(handles.main_plot, 'xticklabel', [], 'yticklabel', []);
            set(handles.main_plot, 'xtick', [], 'ytick', []);
-        end
+       end
+        
+       set(handles.CellPopSim,'Name',['CellPopSim: ' filespec]);
 catch
     errordlg('Error while trying to load model');
 end
@@ -424,7 +426,7 @@ function save_model_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 dc = handles.data_controller;
-[fname, fpath] = uiputfile('*.xml','Save Model as..',pwd);
+[fname, fpath] = uiputfile('*.xml','Save Model as..',dc.DefaultDirectory);
 if fpath == 0; return; end
 filespec = fullfile(fpath,fname);
 try
