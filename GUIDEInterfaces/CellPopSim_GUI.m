@@ -22,7 +22,7 @@ function varargout = CellPopSim_GUI(varargin)
 
 % Edit the above text to modify the response to help CellPopSim_GUI
 
-% Last Modified by GUIDE v2.5 02-Dec-2017 16:29:14
+% Last Modified by GUIDE v2.5 20-Jun-2018 16:49:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -482,3 +482,50 @@ function show_experimental_curve_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of show_experimental_curve
 plot_type_chooser_Callback(hObject, eventdata, handles);
+
+
+% --------------------------------------------------------------------
+function load_state_Callback(hObject, eventdata, handles)
+% hObject    handle to load_state (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+             [fname, fpath] = uigetfile({'*.mat'},'select state file',dc.DefaultDirectory);
+             if fpath == 0, return, end;
+             filespec = fullfile(fpath,fname);
+             try
+                dc.load_state(filespec);
+                    mode_index = get(handles.plot_type_chooser,'Value');
+                    strings = get(handles.plot_type_chooser,'String');
+                    mode = char(strings(mode_index));  
+                    visualize(handles,mode);                    
+                        plot(handles.graph_pane,handles.data_controller.G, ... 
+                                            'Layout','layered', ...
+                                            'EdgeLabel',handles.data_controller.G.Edges.Weight);
+                        set(handles.graph_pane, 'xticklabel', [], 'yticklabel', []);
+                        set(handles.graph_pane, 'xtick', [], 'ytick', []);
+             catch
+                errordlg('Error while trying to load state');
+             end
+
+% --------------------------------------------------------------------
+function save_state_Callback(hObject, eventdata, handles)
+% hObject    handle to save_state (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+dc = handles.data_controller;
+            [fname, fpath] = uiputfile('*.mat','save state as..',[dc.DefaultDirectory filesep 'CellPopSim_state']);
+            if fpath == 0; return; end
+            filespec = fullfile(fpath,fname);
+            try
+                dc.save_state(filespec);
+            catch
+                errordlg('Error while trying to save state');
+            end
+
+
+
+
+
+
+

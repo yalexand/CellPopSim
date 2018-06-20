@@ -377,5 +377,69 @@ end
             obj.DefaultDirectory = settings.DefaultDirectory;
         end                
 %--------------------------------------------------------------------
+        function save_state(obj,fullfilename,~)
+            dt = obj.dt;
+            Tmax = obj.Tmax;
+            Nini = obj.Nini;
+            t = obj.t;
+            cell_buffer = obj.cell_buffer;
+            G = obj.G;
+            S = obj.S;
+            T = obj.T;
+            weights = obj.weights;
+            phenotype_properties_names = obj.phenotype_properties_names;
+            phenotype_properties = obj.phenotype_properties;
+            cell_numbers = obj.cell_numbers;
+            gen_numbers = obj.gen_numbers;
+            experimental_curve = obj.experimental_curve;
+            experimental_curve_name = obj.experimental_curve_name;
+            experimental_curve_scale = obj.experimental_curve_scale;
+            experimental_curve_shift = obj.experimental_curve_shift;
+            DefaultDirectory = obj.DefaultDirectory;
+            %
+            save(fullfilename, ...
+            'dt', ...
+            'Tmax', ...
+            'Nini', ...
+            't', ...
+            'cell_buffer', ...
+            'G', ...
+            'S', ...
+            'T', ...
+            'weights', ...
+            'phenotype_properties_names', ...
+            'phenotype_properties', ...
+            'cell_numbers', ...
+            'gen_numbers', ...
+            'experimental_curve', ...
+            'experimental_curve_name', ...
+            'experimental_curve_scale', ...
+            'experimental_curve_shift', ...
+            'DefaultDirectory');
+        end
+%--------------------------------------------------------------------        
+        function load_state(obj,fullfilename,~)
+            load(fullfilename);
+            %
+            obj.dt = dt;
+            obj.Tmax = Tmax;
+            obj.Nini = Nini;
+            obj.t = t;
+            obj.cell_buffer = cell_buffer;
+            obj.G = G;
+            obj.S = S;
+            obj.T = T;
+            obj.weights = weights;
+            obj.phenotype_properties_names = phenotype_properties_names;
+            obj.phenotype_properties = phenotype_properties;
+            obj.cell_numbers = cell_numbers;
+            obj.gen_numbers = gen_numbers;
+            obj.experimental_curve = experimental_curve;
+            obj.experimental_curve_name = experimental_curve_name;
+            obj.experimental_curve_scale = experimental_curve_scale;
+            obj.experimental_curve_shift = experimental_curve_shift;
+            obj.DefaultDirectory = DefaultDirectory;
+        end
+%--------------------------------------------------------------------        
     end  
 end
