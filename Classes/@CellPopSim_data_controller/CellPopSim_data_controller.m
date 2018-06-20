@@ -14,9 +14,7 @@ classdef CellPopSim_data_controller < handle
         
         Nini = 1;
         
-        t = [];         % global time
-                
-        cells_data = [];        
+        t = [];         % global time                
                 
         cell_buffer = [];
         crnt_buffer = [];
@@ -56,7 +54,13 @@ classdef CellPopSim_data_controller < handle
     end        
 %--------------------------------------------------------------------              
     methods
-%--------------------------------------------------------------------      
+%--------------------------------------------------------------------  
+        function [] =  save(a,fname,varargin)
+            myProp = a.myProp; %#ok<PROP,NASGU>
+            save(fname,'myProp',varargin{:});
+        end
+%--------------------------------------------------------------------  
+
         function obj = CellPopSim_data_controller(varargin)             
             addlistener(obj,'interrupt_simulations',@obj.on_interrupt_simulations);
             obj.create_hematopoietic_graph;

@@ -322,7 +322,7 @@ function dt_edit_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of dt_edit as text
 %        str2double(get(hObject,'String')) returns contents of dt_edit as a double
 value = str2double(get(hObject,'String'));
-if isnumeric(value) && value > 1/12
+if isnumeric(value) && value >= 1/12
     handles.dt = value;
     guidata(hObject,handles);
 else
