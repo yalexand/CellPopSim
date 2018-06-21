@@ -34,6 +34,7 @@ classdef CellPopSim_gui
         %        
         function close_request_fcn(obj,~,~)            
             handles = guidata(obj.window);
+            obj.data_controller = [];
             % actually close window
             delete(handles.window);            
         end
