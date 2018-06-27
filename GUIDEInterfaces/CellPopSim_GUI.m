@@ -396,8 +396,15 @@ try
     % show experimental curve if present
     is_logY = get(handles.logY,'Value');
        if ~isempty(dc.experimental_curve)
+           if ischar(dc.experimental_curve)
+               curve = eval(dc.experimental_curve);
+                te = curve(:,1)/24;
+                Ne = curve(:,2);          
+                dc.experimental_curve = curve;
+           else
             te = dc.experimental_curve(:,1)/24;
             Ne = dc.experimental_curve(:,2);
+           end
             if is_logY
                 semilogy(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
             else
