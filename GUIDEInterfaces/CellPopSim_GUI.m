@@ -240,9 +240,9 @@ switch mode
             Ne = dc.experimental_curve(:,2);
             hold on;
             if is_logY
-                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',1,'markersize',10);
             else
-                plot(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+                plot(handles.main_plot,te,Ne,'ko-','linewidth',1,'markersize',10);
             end            
         end
         %
@@ -406,9 +406,9 @@ try
             Ne = dc.experimental_curve(:,2);
            end
             if is_logY
-                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+                semilogy(handles.main_plot,te,Ne,'ko-','linewidth',1,'markersize',10);
             else
-                plot(handles.main_plot,te,Ne,'ko-','linewidth',2,'markersize',10);
+                plot(handles.main_plot,te,Ne,'ko-','linewidth',1,'markersize',10);
             end
             grid(handles.main_plot,'on');
             xlabel(handles.main_plot,'days past inception','fontsize',12);
